@@ -1,8 +1,8 @@
 # creates the speed test instance and performs the run(s)
-import time
-from datetime import datetime
 from speedtest import Speedtest
+from datetime import datetime
 import Calls as call
+import time
 
 # List for storing values during run
 # To be saved after every runs, residuals saved after run ends
