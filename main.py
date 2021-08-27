@@ -33,14 +33,25 @@ totalReceived = 0
 st = Speedtest()
 
 # User prompt loop to get amount of runs
-userInput = input('Amount of runs?\n')
-while not call.check_user_input(userInput) and counter < 3:
+userInput = input('Amount of runs(int) or date to run to(dd/mm/yyyy)?\n')
+check = call.check_user_input(userInput)
+while 'date' not in check and 'int' not in check and counter < 3:
     counter += 1
     print("input failed attempt ", counter, "(3)", sep='')
     userInput = input('Reruns?(int)')
+    check = call.check_user_input(userInput)
 
-# Convert user input to int
-reruns = int(userInput)
+cond1 = ""
+cond2 = ""
+
+if 'int' in check:
+    # Convert user input to int
+    reruns = int(userInput)
+    cond1 = reruns
+    cond2 = count
+elif 'date' in check:
+    cond1 = time.mktime(time.strptime(userInput, "%d/%m/%Y %H:%M"))
+    cond2 = time.time()
 
 # Check for residual runs
 residualToWrite = False
@@ -49,7 +60,7 @@ if count % 100 > 0:
 
 # Run begins loop
 print("--------------RUN START--------------")
-while count <= reruns:
+while cond1 >= cond2:
     # Get stating time and trigger upload and download
     startTime = time.time()
     st.get_best_server()
@@ -131,6 +142,10 @@ while count <= reruns:
                            totalDuration, totalSent, totalReceived, avgDuration, avgPing,
                            avgUp, avgDown))
     count += 1
+    if 'int' in check:
+        cond2 = count
+    if 'date' in check:
+        cond2 = time.time()
 
 if residualToWrite:
     call.write_results(listValues)

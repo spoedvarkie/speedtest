@@ -1,4 +1,5 @@
 # Function definitions
+import datetime
 from pathlib import Path
 
 
@@ -6,16 +7,21 @@ def check_user_input(input):
     try:
         # Convert it into integer
         val = int(input)
-        return True
+        return "int"
     except ValueError:
         try:
             # Convert it into float
             val = float(input)
             print("Input is a float number not integer")
-            return False
+            return "float"
         except ValueError:
-            print("Input is not a string not integer")
-            return False
+            print("Input is a string not integer - checking date")
+            try:
+                date_timestamp = datetime.datetime.strptime(input, "%d/%m/%Y %H:%M")
+                return "date"
+            except ValueError:
+                print("Input is not a date either")
+                return "false"
 
 
 def file_exists(file_path_name):
