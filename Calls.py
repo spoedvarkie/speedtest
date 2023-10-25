@@ -18,6 +18,7 @@ def check_user_input(input):
             print("Input is a string not integer - checking date")
             try:
                 date_timestamp = datetime.datetime.strptime(input, "%d/%m/%Y %H:%M")
+                print("Date is good")
                 return "date"
             except ValueError:
                 print("Input is not a date either")
@@ -41,8 +42,10 @@ def write_results(result_list: list):
             for r in range(len(result_list)):
                 f.write("\n")
                 f.write(','.join(map(str, result_list[r])))
+            f.close()
     else:
         with open('results.csv', 'a', encoding='UTF8') as f:
             for r in range(len(result_list)):
                 f.write("\n")
                 f.write(','.join(map(str, result_list[r])))
+            f.close()

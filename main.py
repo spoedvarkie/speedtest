@@ -5,7 +5,7 @@ import Calls as call
 import time
 
 # List for storing values during run
-# To be saved after every runs, residuals saved after run ends
+# To be saved after every run, residuals saved after run ends
 # Residual runs -> runs over 100 interval before next interval
 listValues = list()
 
@@ -33,7 +33,7 @@ totalReceived = 0
 st = Speedtest()
 
 # User prompt loop to get amount of runs
-userInput = input('Amount of runs(int) or date to run to(dd/mm/yyyy)?\n')
+userInput = input('Amount of runs(int) or date to run to(dd/mm/yyyy hh:mm)?\n')
 check = call.check_user_input(userInput)
 while 'date' not in check and 'int' not in check and counter < 3:
     counter += 1
@@ -131,7 +131,7 @@ while cond1 >= cond2:
     print("Upload Speed : ", round(avgUp / 1000000, 2), " Mbps", sep='')
     print("Download Speed : ", round(avgDown / 1000000, 2), " Mbps", sep='')
     print("-----------End run ", count, "-----------", sep='')
-    if count < 100:
+    if count < 5:
         listValues.append((currentTime, count, currentDuration, currentPing, currentUpload, currentDownload,
                            totalDuration, totalSent, totalReceived, avgDuration, avgPing,
                            avgUp, avgDown))
@@ -151,4 +151,4 @@ if residualToWrite:
     call.write_results(listValues)
 
 print("---------------RUN END---------------")
-print("=============================\nSpeedtest Completed\n=============================")
+print("=============================\nSpeed test Completed\n=============================")
