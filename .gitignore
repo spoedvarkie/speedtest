@@ -130,3 +130,6 @@ dmypy.json
 
 # PyCharm
 .idea/
+
+# Previous Results
+stored_results/
