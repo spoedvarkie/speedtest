@@ -1,13 +1,16 @@
 # creates the speed test instance and performs the run(s)
-from speedtest import Speedtest
+import speedtest
 from datetime import datetime
-import Calls as call
+import Calls as Call
 import time
+import shutil
 
 # List for storing values during run
 # To be saved after every run, residuals saved after run ends
 # Residual runs -> runs over 100 interval before next interval
+# writeOutCount -> write x amount of stored_results to file
 listValues = list()
+writeOutCount = 5
 
 # Counter to user prompt loop
 counter = 0
@@ -30,16 +33,16 @@ totalSent = 0
 totalReceived = 0
 
 # object initialisation
-st = Speedtest()
+st = speedtest.Speedtest()
 
 # User prompt loop to get amount of runs
 userInput = input('Amount of runs(int) or date to run to(dd/mm/yyyy hh:mm)?\n')
-check = call.check_user_input(userInput)
+check = Call.check_user_input(userInput)
 while 'date' not in check and 'int' not in check and counter < 3:
     counter += 1
     print("input failed attempt ", counter, "(3)", sep='')
     userInput = input('Reruns?(int)')
-    check = call.check_user_input(userInput)
+    check = Call.check_user_input(userInput)
 
 cond1 = ""
 cond2 = ""
@@ -55,7 +58,7 @@ elif 'date' in check:
 
 # Check for residual runs
 residualToWrite = False
-if count % 100 > 0:
+if count % writeOutCount > 0:
     residualToWrite = True
 
 # Run begins loop
@@ -131,16 +134,15 @@ while cond1 >= cond2:
     print("Upload Speed : ", round(avgUp / 1000000, 2), " Mbps", sep='')
     print("Download Speed : ", round(avgDown / 1000000, 2), " Mbps", sep='')
     print("-----------End run ", count, "-----------", sep='')
-    if count < 5:
-        listValues.append((currentTime, count, currentDuration, currentPing, currentUpload, currentDownload,
-                           totalDuration, totalSent, totalReceived, avgDuration, avgPing,
-                           avgUp, avgDown))
-    else:
-        call.write_results(listValues)
+
+    listValues.append((currentTime, count, currentDuration, currentPing, currentUpload, currentDownload,
+                       totalDuration, totalSent, totalReceived, avgDuration, avgPing,
+                       avgUp, avgDown))
+    # Check if set needs to be written to file
+    if count % writeOutCount == 0:
+        Call.write_results(listValues)
         listValues.clear()
-        listValues.append((currentTime, count, currentDuration, currentPing, currentUpload, currentDownload,
-                           totalDuration, totalSent, totalReceived, avgDuration, avgPing,
-                           avgUp, avgDown))
+
     count += 1
     if 'int' in check:
         cond2 = count
@@ -148,7 +150,19 @@ while cond1 >= cond2:
         cond2 = time.time()
 
 if residualToWrite:
-    call.write_results(listValues)
+    Call.write_results(listValues)
 
 print("---------------RUN END---------------")
-print("=============================\nSpeed test Completed\n=============================")
+print("=============================\nSpeed test run(s) Completed\n=============================")
+
+print("Processing Results")
+currentTime = datetime.now().strftime("%Y_%m_%d_%H_%M")
+fileName = 'stored_results/results_' + currentTime + '.csv'
+print("Storing results with date stamp")
+shutil.copy('results.csv', fileName)
+print("FileName:", fileName)
+with open(r"results.csv", 'r+') as fp:
+    fp.truncate()
+    fp.write('time,curr_run,curr_duration,curr_ping,curr_upload,curr_download,total_duration,total_sent,total_received,'
+             'avg_duration,avg_ping,avg_upload_speed,avg_download_speed')
+print("=============================\nResults processed\n=============================")
