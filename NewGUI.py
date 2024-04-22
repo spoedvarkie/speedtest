@@ -2,14 +2,21 @@ import pandas as pd
 import plotly.graph_objects as go
 import os
 import glob
+import easygui
 
-csv_files = glob.glob('stored_results/results_*.csv')
-csv_latest = max(csv_files, key=os.path.getmtime)
-server_files = glob.glob('stored_results/server_*.txt')
-server_latest = max(server_files, key=os.path.getmtime)
-print("Latest", server_files, server_latest)
+inp = input("Choose 1.Latest file or 2.Specific File")
+csvFile = ''
+serverFile = ''
+if inp == "1":
+    csv_files = glob.glob('stored_results/results_*.csv')
+    csvFile = max(csv_files, key=os.path.getmtime)
+    server_files = glob.glob('stored_results/server_*.txt')
+    serverFile = max(server_files, key=os.path.getmtime)
+elif inp == "2":
+    csvFile = easygui.fileopenbox(msg="Choose specific CSV file")
+    serverFile = easygui.fileopenbox(msg="Choose specific SERVER file")
 
-df = pd.read_csv(csv_latest)
+df = pd.read_csv(csvFile)
 
 # fig = px.line(df, x='time', y=['curr_ping', 'curr_upload', 'curr_download', 'avg_ping', 'avg_upload_speed',
 #                                'avg_download_speed'], title='Speedtest Stats', markers=True)
@@ -35,7 +42,7 @@ fig.update_xaxes(
         ])
     )
 )
-with open(server_latest, 'r') as file:
+with open(serverFile, 'r') as file:
     serverDetails = file.read().replace('\n', '')
 
 fig.update_layout(title='Speedtest Statistics - ' + serverDetails, xaxis_title='Date', yaxis_title='Measure Value', plot_bgcolor='silver',

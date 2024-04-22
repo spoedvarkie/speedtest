@@ -4,7 +4,6 @@ from datetime import datetime
 import Calls as Call
 import time
 import shutil
-import json
 
 # List for storing values during run
 # writeOutCount -> write x amount of stored_results to file

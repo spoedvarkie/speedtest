@@ -1,3 +1,4 @@
 speedtest-cli
 pandas
 plotly
+easygui
