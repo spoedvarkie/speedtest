@@ -1,0 +1,1 @@
+SWDconnect Swellendam Avg:12.275ms

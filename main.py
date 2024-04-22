@@ -4,15 +4,14 @@ from datetime import datetime
 import Calls as Call
 import time
 import shutil
+import json
 
 # List for storing values during run
-# To be saved after every run, residuals saved after run ends
-# Residual runs -> runs over 100 interval before next interval
 # writeOutCount -> write x amount of stored_results to file
 listValues = list()
 writeOutCount = 5
 
-# Counter to user prompt loop
+# Counter for retries
 counter = 0
 
 # Loop counter for amount of runs - Prompt to user
@@ -67,6 +66,11 @@ while cond1 >= cond2:
     # Get stating time and trigger upload and download
     startTime = time.time()
     st.get_best_server()
+    print("-------------Server------------")
+    bestServer = st.get_best_server()
+    print("Name:", bestServer['name'])
+    print("Sponsor:", bestServer['sponsor'])
+    print("Latency:", bestServer['latency'])
     st.upload(threads=5, pre_allocate=False)
     st.download(threads=5)
     endTime = time.time()
@@ -151,16 +155,21 @@ while cond1 >= cond2:
 
 if residualToWrite:
     Call.write_results(listValues)
+compileServerInfo = bestServer['sponsor'] + ' ' + bestServer['name'] + ' Avg:' + str(avgPing) + 'ms'
+Call.write_server_info(compileServerInfo)
 
 print("---------------RUN END---------------")
 print("=============================\nSpeed test run(s) Completed\n=============================")
 
 print("Processing Results")
 currentTime = datetime.now().strftime("%Y_%m_%d_%H_%M")
-fileName = 'stored_results/results_' + currentTime + '.csv'
+fileName_Results = 'stored_results/results_' + currentTime + '.csv'
+fileName_ServerInfo = 'stored_results/server_' + currentTime + '.txt'
 print("Storing results with date stamp")
-shutil.copy('results.csv', fileName)
-print("FileName:", fileName)
+shutil.copy('results.csv', fileName_Results)
+shutil.copy('server.txt', fileName_ServerInfo)
+print("FileName:", fileName_Results)
+print("FileName:", fileName_ServerInfo)
 with open(r"results.csv", 'r+') as fp:
     fp.truncate()
     fp.write('time,curr_run,curr_duration,curr_ping,curr_upload,curr_download,total_duration,total_sent,total_received,'

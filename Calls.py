@@ -49,3 +49,13 @@ def write_results(result_list: list):
                 f.write("\n")
                 f.write(','.join(map(str, result_list[r])))
             f.close()
+
+
+def write_server_info(server_info: str):
+    with open('server.txt', 'w', encoding='UTF8') as f:
+        f.write(server_info)
+        f.close()
+
+def latest_file(path: Path, pattern: str = "*"):
+    files = path.glob(pattern)
+    return max(files, key=lambda x: x.stat().st_ctime)
